@@ -16,6 +16,7 @@ public class Main  extends JFrame{
 	
 	public Main() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setSize(500,500);
 		initGUI();
 	}
 
@@ -26,7 +27,7 @@ public class Main  extends JFrame{
 		p.add(new JLabel("z"), new RCPosition(2,7));
 		p.add(new JLabel("w"), new RCPosition(4,2));
 		p.add(new JLabel("a"), new RCPosition(4,5));
-		p.add(new JLabel("b"), new RCPosition(4,7));		
+		p.add(new JLabel("b"), new RCPosition(4,7));
 	}
 
 }

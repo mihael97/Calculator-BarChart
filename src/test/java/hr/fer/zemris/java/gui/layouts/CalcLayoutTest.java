@@ -7,7 +7,6 @@ import java.awt.Dimension;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 @SuppressWarnings("javadoc")
@@ -56,7 +55,6 @@ public class CalcLayoutTest {
 		panel.add(new JLabel("Ivan"), new RCPosition(1, 1));
 	}
 	
-	@Ignore
 	@Test
 	public void prefferedSizeFirst() {
 		JPanel p = new JPanel(new CalcLayout(2));
@@ -83,8 +81,7 @@ public class CalcLayoutTest {
 		p.add(l2, new RCPosition(3,3));
 		Dimension dim = p.getPreferredSize();
 		
-		//assertEquals(158, dim.height);
-
+		assertEquals(158, dim.height);
 		assertEquals(152, dim.width);
 
 	}

@@ -1,5 +1,22 @@
 package hr.fer.zemris.java.gui.layouts;
 
+/**
+ * Enumeration contains all possible types of dimensions
+ * 
+ * @author Mihael
+ *
+ */
 public enum DimensionTypes {
-	MAXIMAL,MINIMAL,PREFERRED;
+	/**
+	 * Maximal dimension
+	 */
+	MAXIMAL,
+	/**
+	 * Minimal dimension
+	 */
+	MINIMAL,
+	/**
+	 * Preferred dimension
+	 */
+	PREFERRED;
 }
