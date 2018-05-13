@@ -7,13 +7,24 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+/**
+ * JFame that contains two lists with generated prime number. It has button
+ * 'next' which action is generating new prime number
+ * 
+ * @author Mihael
+ *
+ */
 public class PrimDemo extends JFrame implements ListDataListener {
+	/**
+	 * serailVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Main program from where we start
 	 * 
@@ -57,18 +68,36 @@ public class PrimDemo extends JFrame implements ListDataListener {
 		add(scrollPane, BorderLayout.CENTER);
 	}
 
+	/**
+	 * Method is called when contents is changed
+	 * 
+	 * @param event
+	 *            - event about change
+	 */
 	@Override
-	public void contentsChanged(ListDataEvent arg0) {
+	public void contentsChanged(ListDataEvent event) {
 		repaint();
 	}
 
+	/**
+	 * Method is called when some interval is added
+	 * 
+	 * @param event
+	 *            - event about change
+	 */
 	@Override
-	public void intervalAdded(ListDataEvent arg0) {
+	public void intervalAdded(ListDataEvent event) {
 		repaint();
 	}
 
+	/**
+	 * Method is called when some interval is removed
+	 * 
+	 * @param event
+	 *            - event about change
+	 */
 	@Override
-	public void intervalRemoved(ListDataEvent arg0) {
+	public void intervalRemoved(ListDataEvent event) {
 		repaint();
 	}
 }
