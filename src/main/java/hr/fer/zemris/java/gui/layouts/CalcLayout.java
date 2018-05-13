@@ -1,5 +1,6 @@
 package hr.fer.zemris.java.gui.layouts;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -8,6 +9,12 @@ import java.awt.LayoutManager2;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Class implements {@link LayoutManager2} and present layout for calculator
+ * 
+ * @author Mihael
+ *
+ */
 public class CalcLayout implements LayoutManager2 {
 
 	/**
@@ -48,7 +55,7 @@ public class CalcLayout implements LayoutManager2 {
 			throw new CalcLayoutException("Space between items must be greather than zero. Given argument is " + bound);
 		}
 
-		this.bound = bound / 2;
+		this.bound = bound;
 		container = new LinkedHashMap<>();
 	}
 
@@ -60,28 +67,38 @@ public class CalcLayout implements LayoutManager2 {
 		this(0);
 	}
 
+	/**
+	 * Method delegates new layout component adding to method with argument
+	 * (Component,Object(RCPosition))
+	 */
 	@Override
 	public void addLayoutComponent(String position, Component component) {
 		addLayoutComponent(component, position);
 	}
 
+	/**
+	 * When frame resize itself, method sets new bounds and component sizes depends
+	 * on new {@link Container} size
+	 * 
+	 * @param container
+	 *            - {@link Container} where we store our components
+	 */
 	@Override
 	public void layoutContainer(Container container) {
 		double width = 0, height = 0;
 
 		for (Map.Entry<RCPosition, Component> map : this.container.entrySet()) {
 			if (map.getValue().getPreferredSize() != null) {
-				Dimension preffered = map.getValue().getPreferredSize();
-				height = Math.max(height, preffered.height);
+				height = Math.max(height, map.getValue().getPreferredSize().height);
 				if (map.getKey().getRow() == 1 && map.getKey().getColumn() == 1)
 					continue;
-				width = Math.max(width, preffered.width);
+				width = Math.max(width, map.getValue().getPreferredSize().width);
 			}
 		}
 
 		Dimension preffered = preferredLayoutSize(container);
-		width = (width * (container.getWidth() / preffered.getWidth()));
-		height = (height * (container.getHeight() / preffered.getHeight()));
+		width = (width * (double) (container.getWidth() / preffered.getWidth()));
+		height = (height * (double) (container.getHeight() / preffered.getHeight()));
 
 		// for every component we need to set position and new size
 		for (Map.Entry<RCPosition, Component> map : this.container.entrySet()) {
@@ -94,16 +111,37 @@ public class CalcLayout implements LayoutManager2 {
 		}
 	}
 
+	/**
+	 * Method returns minimal layout size
+	 * 
+	 * @param container
+	 *            - place where we store our components
+	 * @return {@link Dimension} of minimal layout
+	 */
 	@Override
 	public Dimension minimumLayoutSize(Container container) {
 		return extremeDimensions(container, DimensionTypes.MINIMAL);
 	}
 
+	/**
+	 * Method returns preferred layout size
+	 * 
+	 * @param container
+	 *            - place where we store our components
+	 * @return {@link Dimension} of preferred layout
+	 */
 	@Override
 	public Dimension preferredLayoutSize(Container container) {
-		return extremeDimensions(container, DimensionTypes.PREFERRED);
+		Dimension poc = extremeDimensions(container, DimensionTypes.PREFERRED);
+		return poc;
 	}
 
+	/**
+	 * Method removes component from container
+	 * 
+	 * @param component
+	 *            - component we want to remove
+	 */
 	@Override
 	public void removeLayoutComponent(Component component) {
 		RCPosition forDelete = null;
@@ -118,6 +156,16 @@ public class CalcLayout implements LayoutManager2 {
 		container.remove(forDelete);
 	}
 
+	/**
+	 * Mehtod adds {@link Component} to {@link Container} on specific position given
+	 * by {@link RCPosition}
+	 * 
+	 * @param component
+	 *            - component we want to store
+	 * 
+	 * @param object
+	 *            - {@link RCPosition},position
+	 */
 	@Override
 	public void addLayoutComponent(Component component, Object object) {
 
@@ -151,35 +199,79 @@ public class CalcLayout implements LayoutManager2 {
 			throw new CalcLayoutException("Value with key " + key.toString() + " already exists!");
 		}
 
+		if (key.getRow() == 1 && key.getColumn() == 1) {
+			component.setBackground(Color.YELLOW);
+		} else {
+			component.setBackground(Color.CYAN);
+		}
+		
 		container.put(key, component);
 
 	}
 
+	/**
+	 * Unimplemented
+	 */
 	@Override
 	public float getLayoutAlignmentX(Container arg0) {
 		return 0;
 	}
 
+	/**
+	 * Unimplemented
+	 */
 	@Override
 	public float getLayoutAlignmentY(Container arg0) {
 		return 0;
 	}
 
+	/**
+	 * Unimplemented
+	 */
 	@Override
 	public void invalidateLayout(Container arg0) {
 	}
 
+	/**
+	 * Method returns maximal layout size
+	 * 
+	 * @param container
+	 *            - place where we store our components
+	 * @return {@link Dimension} of maximal layout
+	 */
 	@Override
 	public Dimension maximumLayoutSize(Container container) {
 		return extremeDimensions(container, DimensionTypes.MAXIMAL);
 	}
 
+	/**
+	 * Method checks if position is valid. <br>
+	 * Row position must be between 1 and 5,and column position between 1 and 7. If
+	 * row number is 1,column number cannot be between 2 and 6
+	 * 
+	 * @param x
+	 *            - row
+	 * @param y
+	 *            - column
+	 * 
+	 * @throws CalcLayoutException
+	 *             - if position is not valid
+	 */
 	private void checkDimensions(int x, int y) {
 		if (x < 1 || x > row || y < 1 || y > column || (x == 1 && y >= 2 && y <= 5)) {
 			throw new CalcLayoutException("Position is not valid.(" + x + "," + y + ")");
 		}
 	}
 
+	/**
+	 * Method calculates minimal,maximal of preferred size of components
+	 * 
+	 * @param container
+	 *            - container
+	 * @param type
+	 *            - type of result we want
+	 * @return {@link Dimension}
+	 */
 	public Dimension extremeDimensions(Container container, DimensionTypes type) {
 		int height = 0;
 		int width = 0;

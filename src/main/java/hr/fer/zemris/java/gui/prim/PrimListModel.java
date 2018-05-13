@@ -69,16 +69,16 @@ public class PrimListModel implements ListModel<Integer> {
 	/**
 	 * Method removes listeners from listener list
 	 * 
-	 * @param arg0
+	 * @param l
 	 *            - listener we want to remove
 	 */
 	@Override
-	public void removeListDataListener(ListDataListener arg0) {
-		listeners.remove(arg0);
+	public void removeListDataListener(ListDataListener l) {
+		listeners.remove(l);
 	}
 
 	/**
-	 * Method generates next prime number and after calls every listener with
+	 * Method generates next prime number and after that calls every listener with
 	 * information that interval is added
 	 */
 	public void next() {

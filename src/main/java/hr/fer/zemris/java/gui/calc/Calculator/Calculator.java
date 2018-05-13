@@ -1,5 +1,6 @@
 package hr.fer.zemris.java.gui.calc.Calculator;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Stack;
@@ -45,16 +46,27 @@ public class Calculator extends JFrame {
 	 */
 	Stack<String> context;
 
+	/**
+	 * CheckBox which is on when we want to perform inverse operation
+	 */
 	private static JCheckBox inv;
+
+	/**
+	 * Boolean flag which is use for symbolizing if we need to clean our result
+	 * screen after binary operation result
+	 */
+	private static boolean flag = false;
 
 	/**
 	 * Defined constructor
 	 */
 	public Calculator() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setLocation(500, 500);
+		setLocation(250, 250);
+		setSize(500, 500);
 		setTitle("Calculator");
 		context = new Stack<>();
+		functions = new CalcModelImpl();
 		initGUI();
 	}
 
@@ -70,6 +82,8 @@ public class Calculator extends JFrame {
 			thirdRow(panel);
 			forthRow(panel);
 			fifthRow(panel);
+
+			add(panel);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -82,34 +96,39 @@ public class Calculator extends JFrame {
 	 *            - panel where we save our components
 	 */
 	private void fifthRow(JPanel panel) {
-		JButton x = new JButton("x^n");
-		panel.add(x, new RCPosition(5, 1));
+		try {
+			JButton x = new JButton("x^n");
+			panel.add(x, new RCPosition(5, 1));
 
-		JButton ctg = new JButton("ctg");
-		panel.add(ctg, new RCPosition(5, 2));
+			JButton ctg = new JButton("ctg");
+			ctg.addActionListener(new UnaryOperationWork());
+			panel.add(ctg, new RCPosition(5, 2));
 
-		JButton bt0 = new JButton("0");
-		bt0.addActionListener(new NumberWork());
-		panel.add(bt0, new RCPosition(5, 3));
+			JButton bt0 = new JButton("0");
+			bt0.addActionListener(new NumberWork());
+			panel.add(bt0, new RCPosition(5, 3));
 
-		JButton plusMinus = new JButton("+/-");
-		panel.add(plusMinus, new RCPosition(5, 4));
+			JButton plusMinus = new JButton("+/-");
+			plusMinus.addActionListener(new UnaryOperationWork());
+			panel.add(plusMinus, new RCPosition(5, 4));
 
-		JButton dot = new JButton(".");
-		dot.addActionListener(e -> {
-			functions.insertDecimalPoint();
-			result.setText(result.getText() + ".");
-		});
-		panel.add(dot, new RCPosition(5, 5));
+			JButton dot = new JButton(".");
+			dot.addActionListener(e -> {
+				functions.insertDecimalPoint();
+				result.setText(result.getText() + ".");
+			});
+			panel.add(dot, new RCPosition(5, 5));
 
-		JButton plus = new JButton("+");
-		panel.add(plus, new RCPosition(5, 6));
+			JButton plus = new JButton("+");
+			plus.addActionListener(new BinaryOperationWork());
+			panel.add(plus, new RCPosition(5, 6));
 
-		inv = new JCheckBox("Inv");
-		inv.addActionListener(e -> {
+			inv = new JCheckBox("Inv");
+			panel.add(inv, new RCPosition(5, 7));
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
 
-		});
-		panel.add(inv, new RCPosition(5, 7));
+		}
 	}
 
 	/**
@@ -120,9 +139,11 @@ public class Calculator extends JFrame {
 	 */
 	private void forthRow(JPanel panel) {
 		JButton ln = new JButton("ln");
+		ln.addActionListener(new UnaryOperationWork());
 		panel.add(ln, new RCPosition(4, 1));
 
 		JButton tan = new JButton("tan");
+		tan.addActionListener(new UnaryOperationWork());
 		panel.add(tan, new RCPosition(4, 2));
 
 		JButton bt1 = new JButton("1");
@@ -138,6 +159,7 @@ public class Calculator extends JFrame {
 		panel.add(bt3, new RCPosition(4, 5));
 
 		JButton sub = new JButton("-");
+		sub.addActionListener(new BinaryOperationWork());
 		panel.add(sub, new RCPosition(4, 6));
 
 		JButton pop = new JButton("pop");
@@ -159,11 +181,13 @@ public class Calculator extends JFrame {
 	 *            - panel where we save our components
 	 */
 	private void thirdRow(JPanel panel) {
-		JButton log = new JButton("1/x");
+		JButton log = new JButton("log");
+		log.addActionListener(new UnaryOperationWork());
 		panel.add(log, new RCPosition(3, 1));
 
-		JButton sin = new JButton("sin");
-		panel.add(sin, new RCPosition(3, 2));
+		JButton cos = new JButton("cos");
+		cos.addActionListener(new UnaryOperationWork());
+		panel.add(cos, new RCPosition(3, 2));
 
 		JButton bt4 = new JButton("4");
 		bt4.addActionListener(new NumberWork());
@@ -178,6 +202,7 @@ public class Calculator extends JFrame {
 		panel.add(bt6, new RCPosition(3, 5));
 
 		JButton multiply = new JButton("*");
+		multiply.addActionListener(new BinaryOperationWork());
 		panel.add(multiply, new RCPosition(3, 6));
 
 		JButton push = new JButton("push");
@@ -195,9 +220,11 @@ public class Calculator extends JFrame {
 	 */
 	private void secondRow(JPanel panel) {
 		JButton inverse = new JButton("1/x");
+		inverse.addActionListener(new UnaryOperationWork());
 		panel.add(inverse, new RCPosition(2, 1));
 
 		JButton sin = new JButton("sin");
+		sin.addActionListener(new BinaryOperationWork());
 		panel.add(sin, new RCPosition(2, 2));
 
 		JButton bt7 = new JButton("7");
@@ -213,11 +240,13 @@ public class Calculator extends JFrame {
 		panel.add(bt9, new RCPosition(2, 5));
 
 		JButton divide = new JButton("/");
+		divide.addActionListener(new BinaryOperationWork());
 		panel.add(divide, new RCPosition(2, 6));
 
 		JButton res = new JButton("res");
 		res.addActionListener(e -> {
 			functions.clearAll();
+			result.setText("");
 		});
 		panel.add(res, new RCPosition(2, 7));
 	}
@@ -231,16 +260,17 @@ public class Calculator extends JFrame {
 	private void firstRow(JPanel panel) {
 		result = new JLabel("");
 		result.setEnabled(false);
+		result.setBackground(Color.BLUE);
 		panel.add(result, new RCPosition(1, 1));
 
 		JButton equal = new JButton("=");
-		equal.addActionListener(e -> {
-
-		});
+		equal.addActionListener(new UnaryOperationWork());
+		panel.add(equal, new RCPosition(1, 6));
 
 		JButton clr = new JButton("clr");
 		clr.addActionListener(e -> {
 			functions.clear();
+			result.setText(String.valueOf(functions.getValue()));
 		});
 		panel.add(clr, new RCPosition(1, 7));
 	}
@@ -265,18 +295,38 @@ public class Calculator extends JFrame {
 	 */
 	private static class NumberWork implements ActionListener {
 
+		/**
+		 * Action where we append result screen with new digit
+		 * 
+		 * @param event
+		 *            - action event
+		 */
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			int digit = Integer.parseInt(((JButton) event.getSource()).getName());
+			int digit = Integer.parseInt(((JButton) event.getSource()).getText());
+			if (flag) {
+				result.setText("");
+				flag = false;
+			}
 			functions.insertDigit(digit);
 			result.setText(result.getText() + digit);
 		}
 	}
 
+	/**
+	 * Class present operations which require two arguments
+	 * 
+	 * @author Mihael
+	 *
+	 */
 	private static class BinaryOperationWork implements ActionListener {
+
+		/**
+		 * Action which calculates new result
+		 */
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			String operator = ((JButton) event.getSource()).getName();
+			String operator = ((JButton) event.getSource()).getText();
 
 			switch (operator) {
 			case "/":
@@ -319,16 +369,26 @@ public class Calculator extends JFrame {
 				throw new IllegalArgumentException("Operation \'" + operator + "\' is unsupported!");
 			}
 
-			result.setText(String.valueOf(functions.getValue()));
+			flag = true;
+			result.setText(String.valueOf(functions.getActiveOperand()));
 		}
 
 	}
 
+	/**
+	 * Private class that present operations with one argument
+	 * 
+	 * @author Mihael
+	 *
+	 */
 	private static class UnaryOperationWork implements ActionListener {
 
+		/**
+		 * Action calculates new result
+		 */
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			String operation = ((JButton) arg0.getSource()).getName();
+		public void actionPerformed(ActionEvent event) {
+			String operation = ((JButton) event.getSource()).getText();
 			double value = Double.parseDouble(result.getText());
 
 			switch (operation) {
@@ -391,17 +451,22 @@ public class Calculator extends JFrame {
 			case "=":
 				try {
 					functions.calculateOperation();
-					result.setText(String.valueOf(functions.getActiveOperand()));
 				} catch (Exception e) {
 					result.setText("0");
 				}
 				break;
+			case "+/-":
+				functions.swapSign();
+				result.setText(String.valueOf(functions.getValue()));
+				break;
 			default:
 				throw new IllegalArgumentException("Unsupported operation!");
 			}
-
 			functions.setValue(Double.parseDouble(result.getText()));
 
+			if (operation.equals("=")) {
+				result.setText(String.valueOf(functions.getActiveOperand()));
+			}
 		}
 
 	}

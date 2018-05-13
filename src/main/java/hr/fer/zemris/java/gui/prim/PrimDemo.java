@@ -13,7 +13,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 /**
- * JFame that contains two lists with generated prime number. It has button
+ * JFame that contains two lists with generated prime numbers. It has button
  * 'next' which action is generating new prime number
  * 
  * @author Mihael
@@ -21,7 +21,7 @@ import javax.swing.event.ListDataListener;
  */
 public class PrimDemo extends JFrame implements ListDataListener {
 	/**
-	 * serailVersionUID
+	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -29,6 +29,7 @@ public class PrimDemo extends JFrame implements ListDataListener {
 	 * Main program from where we start
 	 * 
 	 * @param args
+	 *            - not in use
 	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
@@ -69,7 +70,7 @@ public class PrimDemo extends JFrame implements ListDataListener {
 	}
 
 	/**
-	 * Method is called when contents is changed
+	 * Method is called when content is changed
 	 * 
 	 * @param event
 	 *            - event about change

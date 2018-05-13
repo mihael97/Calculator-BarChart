@@ -130,6 +130,9 @@ public class CalcModelImpl implements CalcModel {
 	 */
 	@Override
 	public void insertDigit(int digit) {
+		if (stored == null) {
+			stored = "";
+		}
 		stored = new String(stored + Integer.valueOf(digit));
 	}
 
