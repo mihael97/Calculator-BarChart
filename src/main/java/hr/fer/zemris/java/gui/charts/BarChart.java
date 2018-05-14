@@ -3,32 +3,39 @@ package hr.fer.zemris.java.gui.charts;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Class contains variables for describing some main informations about
+ * {@link BarChartComponent}
+ * 
+ * @author Mihael
+ *
+ */
 public class BarChart {
 	/**
 	 * List of {@link XYValue} elements
 	 */
-	List<XYValue> list;
+	private List<XYValue> list;
 	/**
 	 * Description for x axis
 	 */
-	String xDesc;
+	private String xDesc;
 	/**
 	 * Description for y axis
 	 */
-	String yDesc;
+	private String yDesc;
 	/**
 	 * minimal y
 	 */
-	int yMin;
+	private int yMin;
 	/**
 	 * y maximal
 	 */
-	int yMax;
+	private int yMax;
 
 	/**
 	 * Step between two values
 	 */
-	int yStep;
+	private int yStep;
 
 	/**
 	 * Public constructor which initialize new {@link BarChart}
@@ -60,8 +67,8 @@ public class BarChart {
 
 	/**
 	 * Method calculates new y step. If given y step is not between
-	 * <code>ymin</code> and <code>ymax</code> then new y step for y is for one
-	 * bigger than y min
+	 * <code>yMin</code> and <code>yMax</code> then new y step is for one bigger
+	 * than <code>yMin</code>
 	 * 
 	 * @param yMin
 	 *            - y minimal
@@ -75,4 +82,57 @@ public class BarChart {
 		return yStep >= yMin && yStep <= yMax ? yStep : yMin + 1;
 	}
 
+	/**
+	 * Method return list of {@link XYValue}
+	 * 
+	 * @return list of {@link XYValue}
+	 */
+	public List<XYValue> getList() {
+		return list;
+	}
+
+	/**
+	 * Method returns name of x axis
+	 * 
+	 * @return x axis name
+	 */
+	public String getxDesc() {
+		return xDesc;
+	}
+
+	/**
+	 * Method returns name o y axis
+	 * 
+	 * @return y axis name
+	 */
+	public String getyDesc() {
+		return yDesc;
+	}
+
+	/**
+	 * Method returns <code>yMin</code>
+	 * 
+	 * @return minimal y
+	 */
+	public int getyMin() {
+		return yMin;
+	}
+
+	/**
+	 * Method return <code>yMax</code>
+	 * 
+	 * @return maximal y
+	 */
+	public int getyMax() {
+		return yMax;
+	}
+
+	/**
+	 * Method returns <code>yStep</code>,space between to values on y axis
+	 * 
+	 * @return difference between two values on y axis
+	 */
+	public int getyStep() {
+		return yStep;
+	}
 }

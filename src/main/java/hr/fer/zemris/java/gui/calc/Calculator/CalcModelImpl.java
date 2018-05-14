@@ -213,8 +213,8 @@ public class CalcModelImpl implements CalcModel {
 
 	/**
 	 * Method calculates new active operand. It takes operation from
-	 * <code>pendingOperation </code> and first argument from
-	 * <code>activeOperand</code> and second from <code>stored<\code> value
+	 * <code>pendingOperation </code> with first argument from
+	 * <code>activeOperand</code> and second from <code>stored</code> value
 	 */
 	public void calculateOperation() {
 		if (pendingOperation == null || stored == null || activeOperand == null) {

@@ -21,7 +21,7 @@ import hr.fer.zemris.java.gui.layouts.RCPosition;
 /**
  * Public class that presents calculator with basic functionality. It supports
  * operations for:<br>
- * addition,subtraction,divide,multiplication,and trigonometric function
+ * addition,subtraction,division,multiplication,and trigonometric function
  * cosine,sine,tangent and cotangent with inverse functions
  * 
  * @author Mihael
@@ -74,19 +74,15 @@ public class Calculator extends JFrame {
 	 * Method creates frame with all components
 	 */
 	private void initGUI() {
-		try {
-			JPanel panel = new JPanel(new CalcLayout(3));
+		JPanel panel = new JPanel(new CalcLayout(3));
 
-			firstRow(panel);
-			secondRow(panel);
-			thirdRow(panel);
-			forthRow(panel);
-			fifthRow(panel);
+		firstRow(panel);
+		secondRow(panel);
+		thirdRow(panel);
+		forthRow(panel);
+		fifthRow(panel);
 
-			add(panel);
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
-		}
+		add(panel);
 	}
 
 	/**
@@ -326,53 +322,56 @@ public class Calculator extends JFrame {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			String operator = ((JButton) event.getSource()).getText();
+			try {
+				String operator = ((JButton) event.getSource()).getText();
 
-			switch (operator) {
-			case "/":
-				functions.setPendingBinaryOperation(new DoubleBinaryOperator() {
+				switch (operator) {
+				case "/":
+					functions.setPendingBinaryOperation(new DoubleBinaryOperator() {
 
-					@Override
-					public double applyAsDouble(double arg0, double arg1) {
-						return (double) (arg0 / arg1);
-					}
-				});
-				break;
-			case "*":
-				functions.setPendingBinaryOperation(new DoubleBinaryOperator() {
+						@Override
+						public double applyAsDouble(double arg0, double arg1) {
+							return (double) (arg0 / arg1);
+						}
+					});
+					break;
+				case "*":
+					functions.setPendingBinaryOperation(new DoubleBinaryOperator() {
 
-					@Override
-					public double applyAsDouble(double arg0, double arg1) {
-						return (double) (arg0 * arg1);
-					}
-				});
-				break;
-			case "-":
-				functions.setPendingBinaryOperation(new DoubleBinaryOperator() {
+						@Override
+						public double applyAsDouble(double arg0, double arg1) {
+							return (double) (arg0 * arg1);
+						}
+					});
+					break;
+				case "-":
+					functions.setPendingBinaryOperation(new DoubleBinaryOperator() {
 
-					@Override
-					public double applyAsDouble(double arg0, double arg1) {
-						return arg0 - arg1;
-					}
-				});
-				break;
-			case "+":
-				functions.setPendingBinaryOperation(new DoubleBinaryOperator() {
+						@Override
+						public double applyAsDouble(double arg0, double arg1) {
+							return arg0 - arg1;
+						}
+					});
+					break;
+				case "+":
+					functions.setPendingBinaryOperation(new DoubleBinaryOperator() {
 
-					@Override
-					public double applyAsDouble(double arg0, double arg1) {
-						return arg0 + arg1;
-					}
-				});
-				break;
-			default:
-				throw new IllegalArgumentException("Operation \'" + operator + "\' is unsupported!");
+						@Override
+						public double applyAsDouble(double arg0, double arg1) {
+							return arg0 + arg1;
+						}
+					});
+					break;
+				default:
+					throw new IllegalArgumentException("Operation \'" + operator + "\' is unsupported!");
+				}
+
+				flag = true;
+				result.setText(String.valueOf(functions.getActiveOperand()));
+			} catch (Exception e) {
+				errorException(e.getMessage());
 			}
-
-			flag = true;
-			result.setText(String.valueOf(functions.getActiveOperand()));
 		}
-
 	}
 
 	/**
@@ -388,86 +387,99 @@ public class Calculator extends JFrame {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			String operation = ((JButton) event.getSource()).getText();
-			double value = Double.parseDouble(result.getText());
+			try {
+				String operation = ((JButton) event.getSource()).getText();
+				double value = Double.parseDouble(result.getText());
 
-			switch (operation) {
-			case "1/x":
-				if (value == 0) {
-					throw new IllegalArgumentException("Number cannot be divided with zero!");
-				}
+				switch (operation) {
+				case "1/x":
+					if (value == 0) {
+						throw new IllegalArgumentException("Number cannot be divided with zero!");
+					}
 
-				result.setText(String.valueOf(1 / value));
-				break;
-			case "sin":
-				if (inv.isSelected()) {
-					result.setText(String.valueOf(Math.asin(value)));
-				} else {
-					result.setText(String.valueOf(Math.sin(value)));
+					result.setText(String.valueOf(1 / value));
+					break;
+				case "sin":
+					if (inv.isSelected()) {
+						result.setText(String.valueOf(Math.asin(value)));
+					} else {
+						result.setText(String.valueOf(Math.sin(value)));
+					}
+					break;
+				case "cos":
+					if (inv.isSelected()) {
+						result.setText(String.valueOf(Math.acos(value)));
+					} else {
+						result.setText(String.valueOf(Math.cos(value)));
+					}
+					break;
+				case "tan":
+					if (inv.isSelected()) {
+						result.setText(String.valueOf(Math.atan(value)));
+					} else {
+						result.setText(String.valueOf(Math.tan(value)));
+					}
+					break;
+				case "ctg":
+					if (inv.isSelected()) {
+						result.setText(String.valueOf(1.0 / (1.0 / Math.tan(value))));
+					} else {
+						result.setText(String.valueOf(1.0 / Math.tan(value)));
+					}
+					break;
+				case "log":
+					if (inv.isSelected()) {
+						result.setText(String.valueOf(Math.pow(10, value)));
+					} else {
+						result.setText(String.valueOf(Math.log10(value)));
+					}
+					break;
+				case "ln":
+					if (inv.isSelected()) {
+						result.setText(String.valueOf(Math.pow(Math.E, value)));
+					} else {
+						result.setText(String.valueOf(Math.log(value)));
+					}
+					break;
+				case "x^n":
+					if (inv.isSelected()) {
+						result.setText(String.valueOf(Math.pow(Math.E, value)));
+					} else {
+						result.setText(String.valueOf(Math.log(value)));
+					}
+					break;
+				case "=":
+					try {
+						functions.calculateOperation();
+					} catch (Exception e) {
+						result.setText("0");
+					}
+					break;
+				case "+/-":
+					functions.swapSign();
+					result.setText(String.valueOf(functions.getValue()));
+					break;
+				default:
+					throw new IllegalArgumentException("Unsupported operation!");
 				}
-				break;
-			case "cos":
-				if (inv.isSelected()) {
-					result.setText(String.valueOf(Math.acos(value)));
-				} else {
-					result.setText(String.valueOf(Math.cos(value)));
-				}
-				break;
-			case "tan":
-				if (inv.isSelected()) {
-					result.setText(String.valueOf(Math.atan(value)));
-				} else {
-					result.setText(String.valueOf(Math.tan(value)));
-				}
-				break;
-			case "ctg":
-				if (inv.isSelected()) {
-					result.setText(String.valueOf(1.0 / (1.0 / Math.tan(value))));
-				} else {
-					result.setText(String.valueOf(1.0 / Math.tan(value)));
-				}
-				break;
-			case "log":
-				if (inv.isSelected()) {
-					result.setText(String.valueOf(Math.pow(10, value)));
-				} else {
-					result.setText(String.valueOf(Math.log10(value)));
-				}
-				break;
-			case "ln":
-				if (inv.isSelected()) {
-					result.setText(String.valueOf(Math.pow(Math.E, value)));
-				} else {
-					result.setText(String.valueOf(Math.log(value)));
-				}
-				break;
-			case "x^n":
-				if (inv.isSelected()) {
-					result.setText(String.valueOf(Math.pow(Math.E, value)));
-				} else {
-					result.setText(String.valueOf(Math.log(value)));
-				}
-				break;
-			case "=":
-				try {
-					functions.calculateOperation();
-				} catch (Exception e) {
-					result.setText("0");
-				}
-				break;
-			case "+/-":
-				functions.swapSign();
-				result.setText(String.valueOf(functions.getValue()));
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported operation!");
-			}
-			functions.setValue(Double.parseDouble(result.getText()));
+				functions.setValue(Double.parseDouble(result.getText()));
 
-			if (operation.equals("=")) {
-				result.setText(String.valueOf(functions.getActiveOperand()));
+				if (operation.equals("=")) {
+					result.setText(String.valueOf(functions.getActiveOperand()));
+				}
+			} catch (Exception e) {
+				errorException(e.getMessage());
 			}
 		}
+	}
 
+	/**
+	 * When exception is caught,method prints exception description message
+	 * 
+	 * @param message
+	 *            - exception message
+	 */
+	private static void errorException(String message) {
+		JOptionPane.showMessageDialog(null, message, "Error!", JOptionPane.ERROR_MESSAGE);
 	}
 }
