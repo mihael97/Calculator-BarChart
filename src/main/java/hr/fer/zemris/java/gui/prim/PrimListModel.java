@@ -17,11 +17,11 @@ public class PrimListModel implements ListModel<Integer> {
 	/**
 	 * Already generated prime numbers
 	 */
-	ArrayList<Integer> primeNumbers;
+	private ArrayList<Integer> primeNumbers;
 	/**
 	 * List of listeners
 	 */
-	ArrayList<ListDataListener> listeners;
+	private ArrayList<ListDataListener> listeners;
 
 	/**
 	 * Default constructor

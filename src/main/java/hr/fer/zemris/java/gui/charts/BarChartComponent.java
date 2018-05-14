@@ -84,7 +84,7 @@ public class BarChartComponent extends JComponent {
 
 		initializePositions(graphics2d);
 		drawSystem(graphics2d);
-		drawGrid(graphics2d);
+		// drawGrid(graphics2d);
 		drawAxis(graphics2d);
 		setText(graphics2d);
 		drawArrow(graphics2d);
@@ -97,7 +97,7 @@ public class BarChartComponent extends JComponent {
 	 *            -graphics
 	 */
 	private void drawArrow(Graphics2D graphics2d) {
-		graphics2d.setColor(Color.YELLOW);
+		graphics2d.setColor(Color.GRAY);
 		// on x axis
 		graphics2d.drawLine(bottomRight.getColumn(), bottomRight.getRow(), bottomRight.getColumn() - 5,
 				bottomRight.getRow() - 5);
@@ -156,28 +156,31 @@ public class BarChartComponent extends JComponent {
 		topLeft = new RCPosition(FROM_END / 2 + 10, FROM_END + FROM_AXIS + maxY);
 	}
 
+	// /**
+	// * Method draws grid inside graph
+	// *
+	// * @param graphics2d
+	// * - graphic
+	// */
+	// private void drawGrid(Graphics2D graphics2d) {
+	// graphics2d.setColor(Color.GREEN);
+	//
+	// int offset = (int) Math.floor((bottomLeft.getRow() - topLeft.getRow() -
+	// FROM_AXIS_END)
+	// / ((findMaxValue(graphics2d, true) / chart.getyStep()))) / chart.getyStep();
+	// int index = bottomLeft.getRow() - chart.getyStep() * offset;
+	//
+	// for (int i = chart.getyStep(), limit = findMaxValue(graphics2d, true); i <=
+	// limit; i += chart.getyStep()) {
+	// graphics2d.drawLine(bottomLeft.getColumn(), index, bottomRight.getColumn() -
+	// FROM_AXIS_END, index);
+	// index -= chart.getyStep() * offset;
+	// }
+	//
+	// }
+
 	/**
-	 * Method draws grid inside graph
-	 * 
-	 * @param graphics2d
-	 *            - graphic
-	 */
-	private void drawGrid(Graphics2D graphics2d) {
-		graphics2d.setColor(Color.GREEN);
-
-		int offset = (int) Math.floor((bottomLeft.getRow() - topLeft.getRow() - FROM_AXIS_END)
-				/ ((findMaxValue(graphics2d, true) / chart.getyStep()))) / chart.getyStep();
-		int index = bottomLeft.getRow() - chart.getyStep() * offset;
-
-		for (int i = chart.getyStep(), limit = findMaxValue(graphics2d, true); i <= limit; i += chart.getyStep()) {
-			graphics2d.drawLine(bottomLeft.getColumn(), index, bottomRight.getColumn() - FROM_AXIS_END, index);
-			index -= chart.getyStep() * offset;
-		}
-
-	}
-
-	/**
-	 * Method draws axis lines and values of graph
+	 * Method draws axis lines and values on graph
 	 * 
 	 * @param graphics2d
 	 *            - graphics
@@ -186,36 +189,45 @@ public class BarChartComponent extends JComponent {
 		// y axis
 		FontMetrics font = graphics2d.getFontMetrics();
 		int index = bottomLeft.getRow() + font.stringWidth("0") / 2 + 2;
-		graphics2d.setColor(Color.RED);
-		int offset = (int) Math.floor(
-				(bottomLeft.getRow() - topLeft.getRow() - 10) / ((findMaxValue(graphics2d, true) / chart.getyStep())));
+		graphics2d.setColor(Color.GRAY);
+		int offset = (int) Math.floor((bottomLeft.getRow() - topLeft.getRow() - FROM_AXIS_END)
+				/ ((findMaxValue(graphics2d, true) / chart.getyStep())));
 		for (int i = chart.getyMin(), limit = chart.getyMax(), step = chart.getyStep(); i <= limit; i += step) {
 			graphics2d.drawString(String.valueOf(i),
 					bottomLeft.getColumn() - font.stringWidth(String.valueOf(i)) - FROM_AXIS, index);
+			if (i != chart.getyMin()) {
+				graphics2d.setColor(Color.ORANGE);
+				graphics2d.drawLine(bottomLeft.getColumn(), index, bottomRight.getColumn() - FROM_AXIS, index);
+				graphics2d.setColor(Color.GRAY);
+			}
+			// System.out.println("For " + i + " height is " + (bottomLeft.getRow()-index));
 			index -= offset;
 		}
 
+		index += offset;
+
 		// x axis
-		int yOffset = (int) Math.ceil(offset / chart.getyStep());
+		int yOffset = (int) Math.floor(offset / chart.getyStep());
 
 		offset = (int) Math
 				.floor((bottomRight.getColumn() - bottomLeft.getColumn() - FROM_AXIS) / chart.getList().size());
-		index = bottomLeft.getColumn() + 2;
+		int position = bottomLeft.getColumn() + 3;
 
 		List<XYValue> list = chart.getList();
 
 		for (XYValue value : list) {
-			Rectangle rec = new Rectangle(index, bottomLeft.getRow() - yOffset * value.getY(), offset,
-					yOffset * value.getY());
-			rec.setBounds(index - 1, bottomLeft.getRow() - yOffset * value.getY() - 1, offset - 1,
-					yOffset * value.getY() - 1);
+			graphics2d.setColor(Color.ORANGE);
 
+			System.out.println(value.y + " " + (bottomLeft.getRow() - yOffset * value.y));
+			Rectangle rec = new Rectangle(position, bottomLeft.getRow() - yOffset * value.y, offset, yOffset * value.y);
+			rec.setBounds(position - 1, bottomLeft.getRow() - yOffset * value.y - 1, offset - 1, yOffset * value.y - 1);
 			graphics2d.fill(rec);
 
 			// column name
-			int middle = index + offset / 2 - font.stringWidth(String.valueOf(value.x));
+			graphics2d.setColor(Color.GRAY);
+			int middle = position + offset / 2 - font.stringWidth(String.valueOf(value.x));
 			graphics2d.drawString(String.valueOf(String.valueOf(value.x)), middle, bottomLeft.getRow() + FROM_AXIS);
-			index += offset;
+			position += offset;
 		}
 
 	}
@@ -280,7 +292,7 @@ public class BarChartComponent extends JComponent {
 	 *            - {@link Graphics2D}
 	 */
 	private void drawSystem(Graphics2D graphics2d) {
-		graphics2d.setColor(Color.YELLOW);
+		graphics2d.setColor(Color.GRAY);
 
 		graphics2d.drawLine(bottomLeft.getColumn(), bottomLeft.getRow(), bottomRight.getColumn(), bottomRight.getRow());
 		graphics2d.drawLine(bottomLeft.getColumn(), bottomLeft.getRow(), topLeft.getColumn(), topLeft.getRow());

@@ -94,6 +94,7 @@ public class Calculator extends JFrame {
 	private void fifthRow(JPanel panel) {
 		try {
 			JButton x = new JButton("x^n");
+			x.addActionListener(new BinaryOperationWork());
 			panel.add(x, new RCPosition(5, 1));
 
 			JButton ctg = new JButton("ctg");
@@ -359,6 +360,15 @@ public class Calculator extends JFrame {
 						@Override
 						public double applyAsDouble(double arg0, double arg1) {
 							return arg0 + arg1;
+						}
+					});
+					break;
+				case "x^n":
+					functions.setPendingBinaryOperation(new DoubleBinaryOperator() {
+
+						@Override
+						public double applyAsDouble(double arg0, double arg1) {
+							return Math.pow(arg0, arg1);
 						}
 					});
 					break;
