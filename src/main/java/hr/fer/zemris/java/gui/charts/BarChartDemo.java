@@ -34,9 +34,9 @@ public class BarChartDemo extends JFrame {
 	 */
 	public BarChartDemo(String path) {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setSize(500, 500);
 		setLocation(250, 250);
 		setTitle("BarChar");
+		setSize(500,500);
 		initGUI(path);
 	}
 
@@ -48,8 +48,8 @@ public class BarChartDemo extends JFrame {
 	 */
 	private void initGUI(String path) {
 		getContentPane().setLayout(new BorderLayout());
-		Proba comp = new Proba(readFile(path));
-		comp.setBounds(600, 600, 200, 500);
+		BarChartComponent comp = new BarChartComponent(readFile(path));
+		//comp.setBounds(600, 600, 200, 500);
 		add(comp, BorderLayout.CENTER);
 		JLabel pathLabel = new JLabel(path, (int) CENTER_ALIGNMENT);
 		pathLabel.setAlignmentX(CENTER_ALIGNMENT);

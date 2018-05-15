@@ -147,9 +147,8 @@ public class BarChartComponent extends JComponent {
 	private void initializePositions(Graphics2D graphics2d) {
 		int maxY = findMax(graphics2d, true);
 		int maxX = findMax(graphics2d, false);
-
-		if (getInsets().left != 0)
-			FROM_END = getInsets().left;
+		
+		//FROM_END=(int) (0.1*getHeight());
 
 		bottomLeft = new RCPosition(getHeight() - FROM_END - FROM_AXIS - maxX, FROM_END + FROM_AXIS + maxY);
 		bottomRight = new RCPosition(getHeight() - FROM_END - FROM_AXIS - maxX, getWidth() - FROM_END);
@@ -219,8 +218,6 @@ public class BarChartComponent extends JComponent {
 			int height = yOffset * value.y;
 			Rectangle rec = new Rectangle(position, bottomLeft.getRow() - height, offset, height);
 			rec.setBounds(position - 1, bottomLeft.getRow() - height - 1, offset - 1, height - 1);
-			// rec.setBounds(position, bottomLeft.getRow() - yOffset * value.y, offset ,
-			// yOffset * value.y );
 
 			graphics2d.fill(rec);
 
