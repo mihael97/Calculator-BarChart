@@ -147,8 +147,8 @@ public class BarChartComponent extends JComponent {
 	private void initializePositions(Graphics2D graphics2d) {
 		int maxY = findMax(graphics2d, true);
 		int maxX = findMax(graphics2d, false);
-		
-		//FROM_END=(int) (0.1*getHeight());
+
+		// FROM_END=(int) (0.1*getHeight());
 
 		bottomLeft = new RCPosition(getHeight() - FROM_END - FROM_AXIS - maxX, FROM_END + FROM_AXIS + maxY);
 		bottomRight = new RCPosition(getHeight() - FROM_END - FROM_AXIS - maxX, getWidth() - FROM_END);
@@ -191,6 +191,10 @@ public class BarChartComponent extends JComponent {
 		graphics2d.setColor(Color.GRAY);
 		int offset = (int) Math.floor((bottomLeft.getRow() - topLeft.getRow() - FROM_AXIS_END)
 				/ ((findMaxValue(graphics2d, true) / chart.getyStep())));
+
+		int yMax, yMin;
+		yMax=yMin=0;
+
 		for (int i = chart.getyMin(), limit = chart.getyMax(), step = chart.getyStep(); i <= limit; i += step) {
 			graphics2d.drawString(String.valueOf(i),
 					bottomLeft.getColumn() - font.stringWidth(String.valueOf(i)) - FROM_AXIS, index);
@@ -199,12 +203,17 @@ public class BarChartComponent extends JComponent {
 				graphics2d.drawLine(bottomLeft.getColumn(), index, bottomRight.getColumn() - FROM_AXIS, index);
 				graphics2d.setColor(Color.GRAY);
 			}
+
+			if (i == chart.getyMin())
+				yMin = index;
+			else if (i == limit)
+				yMax = index;
+
 			// System.out.println("For " + i + " height is " + (bottomLeft.getRow()-index));
 			index -= offset;
 		}
 
 		// x axis
-		int yOffset = (int) Math.floor(offset / chart.getyStep());
 		List<XYValue> list = chart.getList();
 
 		offset = (int) Math.floor((bottomRight.getColumn() - bottomLeft.getColumn() - FROM_AXIS) / list.size());
@@ -215,7 +224,7 @@ public class BarChartComponent extends JComponent {
 
 			// System.out.println(value.y + " " + (bottomLeft.getRow() - yOffset *
 			// value.y));
-			int height = yOffset * value.y;
+			int height = calculateHeight(yMax, yMin, value.y);
 			Rectangle rec = new Rectangle(position, bottomLeft.getRow() - height, offset, height);
 			rec.setBounds(position - 1, bottomLeft.getRow() - height - 1, offset - 1, height - 1);
 
@@ -281,6 +290,10 @@ public class BarChartComponent extends JComponent {
 		}
 
 		return max;
+	}
+
+	public int calculateHeight(int yMax, int yMin, int value) {
+		return (yMax - yMin) / (chart.getyMax() - chart.getyMin()) * (value - chart.getyMin()) + yMin;
 	}
 
 	/**
