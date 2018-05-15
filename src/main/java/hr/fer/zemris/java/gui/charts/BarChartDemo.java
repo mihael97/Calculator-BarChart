@@ -48,7 +48,7 @@ public class BarChartDemo extends JFrame {
 	 */
 	private void initGUI(String path) {
 		getContentPane().setLayout(new BorderLayout());
-		BarChartComponent comp = new BarChartComponent(readFile(path));
+		Proba comp = new Proba(readFile(path));
 		comp.setBounds(600, 600, 200, 500);
 		add(comp, BorderLayout.CENTER);
 		JLabel pathLabel = new JLabel(path, (int) CENTER_ALIGNMENT);

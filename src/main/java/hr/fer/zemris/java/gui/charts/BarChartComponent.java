@@ -204,23 +204,24 @@ public class BarChartComponent extends JComponent {
 			index -= offset;
 		}
 
-		index += offset;
-
 		// x axis
 		int yOffset = (int) Math.floor(offset / chart.getyStep());
-
-		offset = (int) Math
-				.floor((bottomRight.getColumn() - bottomLeft.getColumn() - FROM_AXIS) / chart.getList().size());
-		int position = bottomLeft.getColumn() + 3;
-
 		List<XYValue> list = chart.getList();
+
+		offset = (int) Math.floor((bottomRight.getColumn() - bottomLeft.getColumn() - FROM_AXIS) / list.size());
+		int position = bottomLeft.getColumn() + 3;
 
 		for (XYValue value : list) {
 			graphics2d.setColor(Color.ORANGE);
 
-			System.out.println(value.y + " " + (bottomLeft.getRow() - yOffset * value.y));
-			Rectangle rec = new Rectangle(position, bottomLeft.getRow() - yOffset * value.y, offset, yOffset * value.y);
-			rec.setBounds(position - 1, bottomLeft.getRow() - yOffset * value.y - 1, offset - 1, yOffset * value.y - 1);
+			// System.out.println(value.y + " " + (bottomLeft.getRow() - yOffset *
+			// value.y));
+			int height = yOffset * value.y;
+			Rectangle rec = new Rectangle(position, bottomLeft.getRow() - height, offset, height);
+			rec.setBounds(position - 1, bottomLeft.getRow() - height - 1, offset - 1, height - 1);
+			// rec.setBounds(position, bottomLeft.getRow() - yOffset * value.y, offset ,
+			// yOffset * value.y );
+
 			graphics2d.fill(rec);
 
 			// column name
