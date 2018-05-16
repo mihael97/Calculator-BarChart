@@ -85,30 +85,45 @@ public class CalcLayout implements LayoutManager2 {
 	 */
 	@Override
 	public void layoutContainer(Container container) {
-		double width = 0, height = 0;
+		Dimension size = calculateSize(container);
 
-		for (Map.Entry<RCPosition, Component> map : this.container.entrySet()) {
-			if (map.getValue().getPreferredSize() != null) {
-				height = Math.max(map.getValue().getPreferredSize().height, height);
-				if (map.getKey().getRow() == 1 && map.getKey().getColumn() == 1)
-					continue;
-				width = Math.max(map.getValue().getPreferredSize().width, width);
-			}
+		// size has dimensions of all cells,we need dimension of one cell
+		size.height /= row;
+		size.width /= column;
+
+		// we go trough all components and we set them to new location and new size
+		for (Map.Entry<RCPosition, Component> component : this.container.entrySet()) {
+			// location
+			component.getValue().setLocation(
+					container.getInsets().left + (component.getKey().getColumn() - 1) * (size.width + bound),
+					container.getInsets().top + (component.getKey().getRow() - 1) * (bound + size.height));
+
+			// we set size depends on location,if component is on position (1,1) it would
+			// take 5 width cells
+
+			component.getValue()
+					.setSize((component.getKey().getRow() == 1 && component.getKey().getColumn() == 1)
+							? (5 * size.width + 4 * bound)
+							: size.width, size.height);
 		}
 
-		Dimension preffered = preferredLayoutSize(container);
-		width = (width * (double) (container.getWidth() / preffered.getWidth()));
-		height = (height * (double) (container.getHeight() / preffered.getHeight()));
+	}
 
-		// for every component we need to set position and new size
-		for (Map.Entry<RCPosition, Component> map : this.container.entrySet()) {
-			if (map.getKey().getRow() == 1 && map.getKey().getColumn() == 1) { // first element,takes 4 columns
-				map.getValue().setBounds(0, 0, (int) (4 * bound + 5 * width), (int) height);
-			} else {
-				map.getValue().setBounds((int) ((map.getKey().getColumn() - 1) * (width + bound)),
-						(int) ((map.getKey().getRow() - 1) * (height + bound)), (int) width, (int) height);
-			}
-		}
+	/**
+	 * Method calculates size of all components together,without spaces and insets.
+	 * 
+	 * @param container
+	 *            - container
+	 * @return size of all components
+	 */
+	private Dimension calculateSize(Container container) {
+
+		Dimension size = container.getSize(); // size of screen
+		// we need to subtract all insets and spaces between cells
+		size.height -= (container.getInsets().bottom + container.getInsets().top + (row - 1) * bound);
+		size.width -= (container.getInsets().left + container.getInsets().right + (column - 1) * bound);
+
+		return size;
 	}
 
 	/**
@@ -313,6 +328,7 @@ public class CalcLayout implements LayoutManager2 {
 		height = insets.top + insets.bottom + row * height + (row - 1) * bound;
 		width = insets.left + insets.right + (maxFirst != 0 ? (maxFirst + 2 * width) : column * width)
 				+ (column - 1) * bound;
+		// width = insets.left + insets.right + column * width + (column - 1) * bound;
 
 		return new Dimension(width, height);
 	}

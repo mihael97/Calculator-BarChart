@@ -1,6 +1,7 @@
 package hr.fer.zemris.java.gui.prim;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -26,7 +27,7 @@ public class PrimDemo extends JFrame implements ListDataListener {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Main program from where we start
+	 * Main program from where we start our frame
 	 * 
 	 * @param args
 	 *            - not in use
@@ -43,7 +44,7 @@ public class PrimDemo extends JFrame implements ListDataListener {
 	public PrimDemo() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLocation(500, 500);
-		setSize(200, 200);
+		setSize(500, 500);
 		initGUI();
 	}
 
@@ -55,6 +56,7 @@ public class PrimDemo extends JFrame implements ListDataListener {
 		PrimListModel model = new PrimListModel();
 
 		JList<Integer> left = new JList<>(model);
+		left.setSize(left.getPreferredSize());
 		JList<Integer> right = new JList<>(model);
 
 		JButton next = new JButton("Next");
@@ -63,10 +65,10 @@ public class PrimDemo extends JFrame implements ListDataListener {
 		});
 		add(next, BorderLayout.PAGE_END);
 		JPanel center = new JPanel();
-		center.add(left);
-		center.add(right);
-		JScrollPane scrollPane = new JScrollPane(center);
-		add(scrollPane, BorderLayout.CENTER);
+		center.setLayout(new GridLayout(1, 2));
+		center.add(new JScrollPane(left));
+		center.add(new JScrollPane(right));
+		add(center, BorderLayout.CENTER);
 	}
 
 	/**
