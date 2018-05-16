@@ -166,7 +166,7 @@ public class Calculator extends JFrame implements CalcValueListener {
 			if (context.size() == 0) {
 				errorException("Pop cannot be done because stack is empty!");
 			} else {
-				functions.setValue(Double.parseDouble(result.getText()));
+				functions.setValue(Double.parseDouble(context.pop()));
 			}
 		});
 		panel.add(pop, new RCPosition(4, 7));
