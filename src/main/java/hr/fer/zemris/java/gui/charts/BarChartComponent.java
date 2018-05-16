@@ -100,6 +100,7 @@ public class BarChartComponent extends JComponent {
 	 */
 	private void drawVerticalGrid(Graphics2D graphics2d) {
 		// x axis
+		graphics2d.setColor(Color.GRAY);
 		List<XYValue> list = chart.getList();
 		FontMetrics font = graphics2d.getFontMetrics();
 
@@ -134,14 +135,11 @@ public class BarChartComponent extends JComponent {
 
 		int index = chart.getyMin();
 
-		graphics2d.setColor(Color.GRAY);
-
 		double limit2 = bottomLeft.x + xAxes - FROM_AXIS_END;
 
 		for (int i = bottomLeft.y, limit = (int) (bottomLeft.y - yAxes); i >= limit; i -= offset) {
 			graphics2d.setColor(Color.GRAY);
 			if (i != bottomLeft.y) {
-				graphics2d.setColor(Color.BLACK);
 				graphics2d.drawLine(bottomLeft.x, i, (int) limit2, i);
 			}
 
@@ -237,7 +235,7 @@ public class BarChartComponent extends JComponent {
 		int offset = (int) Math.floor((xAxes - FROM_AXIS) / list.size());
 		int position = bottomLeft.x + 1;
 
-		int length = yAxes-FROM_AXIS_END;
+		int length = yAxes - FROM_AXIS_END;
 		for (XYValue value : list) {
 			double height = (double) value.getY() / chart.getyMax() * length;
 

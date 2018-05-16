@@ -275,6 +275,7 @@ public class CalcLayout implements LayoutManager2 {
 	public Dimension extremeDimensions(Container container, DimensionTypes type) {
 		int height = 0;
 		int width = 0;
+		int maxFirst = 0;
 		Insets insets = container.getInsets();
 
 		for (Map.Entry<RCPosition, Component> map : this.container.entrySet()) {
@@ -295,17 +296,23 @@ public class CalcLayout implements LayoutManager2 {
 
 				height = Math.max(height, dim.height);
 
-				if (map.getKey().getRow() == 1 && map.getKey().getColumn() == 1 && type == DimensionTypes.PREFERRED) {
+				boolean flag = map.getKey().getRow() == 1 && map.getKey().getColumn() == 1;
+
+				if (flag && type == DimensionTypes.PREFERRED) {
+					maxFirst = dim.width;
+
+					continue;
+				} else if (flag) {
 					continue;
 				}
 
 				width = Math.max(width, dim.width);
-
 			}
 		}
 
 		height = insets.top + insets.bottom + row * height + (row - 1) * bound;
-		width = insets.left + insets.right + column * width + (column - 1) * bound;
+		width = insets.left + insets.right + (maxFirst != 0 ? (maxFirst + 2 * width) : column * width)
+				+ (column - 1) * bound;
 
 		return new Dimension(width, height);
 	}

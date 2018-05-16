@@ -15,7 +15,8 @@ import javax.swing.WindowConstants;
 
 /**
  * Class which extends {@link JFrame} where {@link BarChartComponent} is
- * printed. Examples are in folder <code>src/main/resources/</code>
+ * printed. Examples are in folder <code>src/main/resources/</code> where
+ * example given is instructions is in file <code>"Input.txt"</code>
  * 
  * @author Mihael
  *
@@ -51,7 +52,7 @@ public class BarChartDemo extends JFrame {
 		getContentPane().setLayout(new BorderLayout());
 		BarChartComponent comp = new BarChartComponent(readFile(path));
 		add(comp, BorderLayout.CENTER);
-		JLabel pathLabel = new JLabel("Mihael " + path, (int) CENTER_ALIGNMENT);
+		JLabel pathLabel = new JLabel(path, (int) CENTER_ALIGNMENT);
 		pathLabel.setAlignmentX(CENTER_ALIGNMENT);
 		add(pathLabel, BorderLayout.PAGE_START);
 	}
