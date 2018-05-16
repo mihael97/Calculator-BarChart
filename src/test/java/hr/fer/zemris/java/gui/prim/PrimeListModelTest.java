@@ -33,7 +33,7 @@ public class PrimeListModelTest {
 	}
 
 	@Test
-	public void unGeneratedElement() {
+	public void notGeneratedElement() {
 		PrimListModel model = new PrimListModel();
 
 		for (int i = 0; i <= 5; i++) {

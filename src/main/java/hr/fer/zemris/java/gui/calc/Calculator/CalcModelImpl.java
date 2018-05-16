@@ -36,7 +36,6 @@ public class CalcModelImpl implements CalcModel {
 	 * Default constructor
 	 */
 	public CalcModelImpl() {
-		stored = new String();
 		listeners = new ArrayList<>();
 	}
 
@@ -69,7 +68,7 @@ public class CalcModelImpl implements CalcModel {
 	 */
 	@Override
 	public double getValue() {
-		return stored == null ? 0.0 : Double.parseDouble(stored);
+		return stored == null ? Double.valueOf(0) : Double.parseDouble(stored);
 	}
 
 	/**
@@ -81,6 +80,8 @@ public class CalcModelImpl implements CalcModel {
 	@Override
 	public void setValue(double value) {
 		stored = String.valueOf(value);
+
+		callListeners();
 	}
 
 	/**
@@ -89,6 +90,8 @@ public class CalcModelImpl implements CalcModel {
 	@Override
 	public void clear() {
 		stored = null;
+		
+		callListeners();
 	}
 
 	/**
@@ -99,6 +102,8 @@ public class CalcModelImpl implements CalcModel {
 		stored = null;
 		activeOperand = null;
 		pendingOperation = null;
+		
+		callListeners();
 	}
 
 	/**
@@ -106,12 +111,14 @@ public class CalcModelImpl implements CalcModel {
 	 */
 	@Override
 	public void swapSign() {
-		if (stored.length() != 0) {
+		if (stored != null) {
 			if (stored.charAt(0) == '-') {
 				stored = new String(stored.substring(1));
 			} else {
 				stored = new String("-" + stored);
 			}
+
+			callListeners();
 		}
 	}
 
@@ -120,8 +127,14 @@ public class CalcModelImpl implements CalcModel {
 	 */
 	@Override
 	public void insertDecimalPoint() {
-		if (stored.charAt(stored.length() - 1) != '.') {
+		if (stored != null && stored.charAt(stored.length() - 1) != '.' && !stored.contains(".")) {
 			stored = new String(stored + ".");
+
+			callListeners();
+		} else if (stored == null) {
+			stored = "0.";
+
+			callListeners();
 		}
 	}
 
@@ -130,10 +143,27 @@ public class CalcModelImpl implements CalcModel {
 	 */
 	@Override
 	public void insertDigit(int digit) {
+
 		if (stored == null) {
-			stored = "";
+			stored = "0";
+			callListeners();
 		}
-		stored = new String(stored + Integer.valueOf(digit));
+
+		if (stored != null && Double.parseDouble(stored + digit) < Double.MAX_VALUE) {
+			Double.parseDouble(stored + digit);
+
+			if (!(digit == 0 && stored.equals("0"))) {
+				if (stored.equals("0")) {
+					stored = "";
+				}
+				stored = new String(stored + Integer.valueOf(digit));
+			} else {
+				stored = "0";
+			}
+
+			callListeners();
+		}
+
 	}
 
 	/**
@@ -170,7 +200,12 @@ public class CalcModelImpl implements CalcModel {
 	 */
 	@Override
 	public void setActiveOperand(double activeOperand) {
-		activeOperand = Double.valueOf(activeOperand);
+		this.activeOperand = Double.valueOf(activeOperand);
+		
+		if(pendingOperation!=null) {
+			calculateOperation();
+		}
+		
 	}
 
 	/**
@@ -203,9 +238,13 @@ public class CalcModelImpl implements CalcModel {
 	public void setPendingBinaryOperation(DoubleBinaryOperator op) {
 		if (pendingOperation != null && stored != null && activeOperand != null) {
 			calculateOperation();
+
+			callListeners();
 		} else if (stored != null && activeOperand == null) {
 			activeOperand = Double.parseDouble(stored);
 			stored = null;
+
+			callListeners();
 		}
 
 		pendingOperation = Objects.requireNonNull(op, "Binary Operator can't be null!");
@@ -223,6 +262,26 @@ public class CalcModelImpl implements CalcModel {
 
 		activeOperand = pendingOperation.applyAsDouble(activeOperand, Double.parseDouble(stored));
 		stored = null;
+	}
+
+	/**
+	 * Method returns string representation of stored value. If stored value is
+	 * <code>null</code> result will be 0
+	 */
+	@Override
+	public String toString() {
+		if (stored == null)
+			return "0";
+		return stored.toString();
+	}
+
+	/**
+	 * Method contacts every listener that value is changed
+	 */
+	private void callListeners() {
+		for (CalcValueListener listener : listeners) {
+			listener.valueChanged(this);
+		}
 	}
 
 }

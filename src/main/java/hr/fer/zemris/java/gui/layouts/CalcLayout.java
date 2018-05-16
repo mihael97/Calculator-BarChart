@@ -89,10 +89,10 @@ public class CalcLayout implements LayoutManager2 {
 
 		for (Map.Entry<RCPosition, Component> map : this.container.entrySet()) {
 			if (map.getValue().getPreferredSize() != null) {
-				height = Math.max(height, map.getValue().getPreferredSize().height);
+				height = Math.max(map.getValue().getPreferredSize().height, height);
 				if (map.getKey().getRow() == 1 && map.getKey().getColumn() == 1)
 					continue;
-				width = Math.max(width, map.getValue().getPreferredSize().width);
+				width = Math.max(map.getValue().getPreferredSize().width, width);
 			}
 		}
 
@@ -204,7 +204,7 @@ public class CalcLayout implements LayoutManager2 {
 		} else {
 			component.setBackground(Color.CYAN);
 		}
-		
+
 		container.put(key, component);
 
 	}
@@ -282,6 +282,7 @@ public class CalcLayout implements LayoutManager2 {
 					|| type == DimensionTypes.MAXIMAL && map.getValue().getMaximumSize() != null
 					|| type == DimensionTypes.PREFERRED && map.getValue().getPreferredSize() != null) {
 				Dimension dim;
+
 				if (type == DimensionTypes.MINIMAL)
 					dim = map.getValue().getMinimumSize();
 				else if (type == DimensionTypes.MAXIMAL)
@@ -294,11 +295,12 @@ public class CalcLayout implements LayoutManager2 {
 
 				height = Math.max(height, dim.height);
 
-				if (map.getKey().getRow() == 1 && map.getKey().getColumn() == 1) {
+				if (map.getKey().getRow() == 1 && map.getKey().getColumn() == 1 && type == DimensionTypes.PREFERRED) {
 					continue;
 				}
 
 				width = Math.max(width, dim.width);
+
 			}
 		}
 

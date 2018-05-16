@@ -14,7 +14,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 /**
- * Class which extends {@link JFrame} where {@link BarChartComponent} is printed
+ * Class which extends {@link JFrame} where {@link BarChartComponent} is
+ * printed. Examples are in folder <code>src/main/resources/</code>
  * 
  * @author Mihael
  *
@@ -22,7 +23,7 @@ import javax.swing.WindowConstants;
 public class BarChartDemo extends JFrame {
 
 	/**
-	 * 
+	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -36,7 +37,7 @@ public class BarChartDemo extends JFrame {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setLocation(250, 250);
 		setTitle("BarChar");
-		setSize(500,500);
+		setSize(500, 500);
 		initGUI(path);
 	}
 
@@ -49,9 +50,8 @@ public class BarChartDemo extends JFrame {
 	private void initGUI(String path) {
 		getContentPane().setLayout(new BorderLayout());
 		BarChartComponent comp = new BarChartComponent(readFile(path));
-		//comp.setBounds(600, 600, 200, 500);
 		add(comp, BorderLayout.CENTER);
-		JLabel pathLabel = new JLabel(path, (int) CENTER_ALIGNMENT);
+		JLabel pathLabel = new JLabel("Mihael " + path, (int) CENTER_ALIGNMENT);
 		pathLabel.setAlignmentX(CENTER_ALIGNMENT);
 		add(pathLabel, BorderLayout.PAGE_START);
 	}
@@ -64,6 +64,7 @@ public class BarChartDemo extends JFrame {
 	 * @return new {@link BarChart}
 	 */
 	private BarChart readFile(String path) {
+
 		try {
 
 			List<XYValue> context = new ArrayList<>();

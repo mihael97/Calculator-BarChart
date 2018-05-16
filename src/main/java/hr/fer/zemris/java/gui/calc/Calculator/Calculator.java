@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Stack;
-import java.util.function.DoubleBinaryOperator;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -15,6 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
+import hr.fer.zemris.java.gui.calc.Calculator.interfaces.CalcModel;
+import hr.fer.zemris.java.gui.calc.Calculator.interfaces.CalcValueListener;
 import hr.fer.zemris.java.gui.layouts.CalcLayout;
 import hr.fer.zemris.java.gui.layouts.RCPosition;
 
@@ -27,7 +27,7 @@ import hr.fer.zemris.java.gui.layouts.RCPosition;
  * @author Mihael
  *
  */
-public class Calculator extends JFrame {
+public class Calculator extends JFrame implements CalcValueListener {
 
 	/**
 	 * serialVersionUID
@@ -67,6 +67,7 @@ public class Calculator extends JFrame {
 		setTitle("Calculator");
 		context = new Stack<>();
 		functions = new CalcModelImpl();
+		functions.addCalcValueListener(this);
 		initGUI();
 	}
 
@@ -93,11 +94,12 @@ public class Calculator extends JFrame {
 	 */
 	private void fifthRow(JPanel panel) {
 		try {
-			JButton x = new JButton("x^n");
+			BinaryOperatorButton x = new BinaryOperatorButton("x^n", (a, b) -> (Math.pow(a, b)));
 			x.addActionListener(new BinaryOperationWork());
 			panel.add(x, new RCPosition(5, 1));
 
-			JButton ctg = new JButton("ctg");
+			UnaryOperatorButton ctg = new UnaryOperatorButton("ctg", (a) -> (1 / Math.tan(a)),
+					(a) -> (1.0 / 1.0 / Math.tan(a)));
 			ctg.addActionListener(new UnaryOperationWork());
 			panel.add(ctg, new RCPosition(5, 2));
 
@@ -116,7 +118,7 @@ public class Calculator extends JFrame {
 			});
 			panel.add(dot, new RCPosition(5, 5));
 
-			JButton plus = new JButton("+");
+			BinaryOperatorButton plus = new BinaryOperatorButton("+", (a, b) -> (a + b));
 			plus.addActionListener(new BinaryOperationWork());
 			panel.add(plus, new RCPosition(5, 6));
 
@@ -135,11 +137,11 @@ public class Calculator extends JFrame {
 	 *            - panel where we save our components
 	 */
 	private void forthRow(JPanel panel) {
-		JButton ln = new JButton("ln");
+		UnaryOperatorButton ln = new UnaryOperatorButton("ln", (a) -> (Math.log(a)), (a) -> (Math.pow(Math.E, a)));
 		ln.addActionListener(new UnaryOperationWork());
 		panel.add(ln, new RCPosition(4, 1));
 
-		JButton tan = new JButton("tan");
+		UnaryOperatorButton tan = new UnaryOperatorButton("tan", (a) -> (Math.tan(a)), (a) -> (Math.atan(a)));
 		tan.addActionListener(new UnaryOperationWork());
 		panel.add(tan, new RCPosition(4, 2));
 
@@ -155,16 +157,15 @@ public class Calculator extends JFrame {
 		bt3.addActionListener(new NumberWork());
 		panel.add(bt3, new RCPosition(4, 5));
 
-		JButton sub = new JButton("-");
+		BinaryOperatorButton sub = new BinaryOperatorButton("-", (a, b) -> (a - b));
 		sub.addActionListener(new BinaryOperationWork());
 		panel.add(sub, new RCPosition(4, 6));
 
 		JButton pop = new JButton("pop");
 		pop.addActionListener(e -> {
 			if (context.size() == 0) {
-				throw new IllegalArgumentException("Pop cannot be done because stack is empty!");
+				errorException("Pop cannot be done because stack is empty!");
 			} else {
-				result.setText(context.pop());
 				functions.setValue(Double.parseDouble(result.getText()));
 			}
 		});
@@ -178,11 +179,11 @@ public class Calculator extends JFrame {
 	 *            - panel where we save our components
 	 */
 	private void thirdRow(JPanel panel) {
-		JButton log = new JButton("log");
+		UnaryOperatorButton log = new UnaryOperatorButton("log", (a) -> (Math.log10(a)), (a) -> (Math.pow(10, a)));
 		log.addActionListener(new UnaryOperationWork());
 		panel.add(log, new RCPosition(3, 1));
 
-		JButton cos = new JButton("cos");
+		UnaryOperatorButton cos = new UnaryOperatorButton("cos", (a) -> (Math.cos(a)), (a) -> (Math.acos(a)));
 		cos.addActionListener(new UnaryOperationWork());
 		panel.add(cos, new RCPosition(3, 2));
 
@@ -198,7 +199,7 @@ public class Calculator extends JFrame {
 		bt6.addActionListener(new NumberWork());
 		panel.add(bt6, new RCPosition(3, 5));
 
-		JButton multiply = new JButton("*");
+		BinaryOperatorButton multiply = new BinaryOperatorButton("*", (a, b) -> (a * b));
 		multiply.addActionListener(new BinaryOperationWork());
 		panel.add(multiply, new RCPosition(3, 6));
 
@@ -216,12 +217,12 @@ public class Calculator extends JFrame {
 	 *            - panel where we save our components
 	 */
 	private void secondRow(JPanel panel) {
-		JButton inverse = new JButton("1/x");
+		UnaryOperatorButton inverse = new UnaryOperatorButton("1/x", null, null);
 		inverse.addActionListener(new UnaryOperationWork());
 		panel.add(inverse, new RCPosition(2, 1));
 
-		JButton sin = new JButton("sin");
-		sin.addActionListener(new BinaryOperationWork());
+		UnaryOperatorButton sin = new UnaryOperatorButton("sin", (a) -> (Math.sin(a)), (a) -> (Math.asin(a)));
+		sin.addActionListener(new UnaryOperationWork());
 		panel.add(sin, new RCPosition(2, 2));
 
 		JButton bt7 = new JButton("7");
@@ -236,14 +237,13 @@ public class Calculator extends JFrame {
 		bt9.addActionListener(new NumberWork());
 		panel.add(bt9, new RCPosition(2, 5));
 
-		JButton divide = new JButton("/");
+		BinaryOperatorButton divide = new BinaryOperatorButton("/", (a, b) -> (a / b));
 		divide.addActionListener(new BinaryOperationWork());
 		panel.add(divide, new RCPosition(2, 6));
 
 		JButton res = new JButton("res");
 		res.addActionListener(e -> {
 			functions.clearAll();
-			result.setText("");
 		});
 		panel.add(res, new RCPosition(2, 7));
 	}
@@ -256,11 +256,12 @@ public class Calculator extends JFrame {
 	 */
 	private void firstRow(JPanel panel) {
 		result = new JLabel("");
+		result.setText(functions.toString());
 		result.setEnabled(false);
 		result.setBackground(Color.BLUE);
 		panel.add(result, new RCPosition(1, 1));
 
-		JButton equal = new JButton("=");
+		UnaryOperatorButton equal = new UnaryOperatorButton("=", null, null);
 		equal.addActionListener(new UnaryOperationWork());
 		panel.add(equal, new RCPosition(1, 6));
 
@@ -306,7 +307,7 @@ public class Calculator extends JFrame {
 				flag = false;
 			}
 			functions.insertDigit(digit);
-			result.setText(result.getText() + digit);
+			// result.setText(result.getText() + digit);
 		}
 	}
 
@@ -324,60 +325,11 @@ public class Calculator extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			try {
-				String operator = ((JButton) event.getSource()).getText();
 
-				switch (operator) {
-				case "/":
-					functions.setPendingBinaryOperation(new DoubleBinaryOperator() {
-
-						@Override
-						public double applyAsDouble(double arg0, double arg1) {
-							return (double) (arg0 / arg1);
-						}
-					});
-					break;
-				case "*":
-					functions.setPendingBinaryOperation(new DoubleBinaryOperator() {
-
-						@Override
-						public double applyAsDouble(double arg0, double arg1) {
-							return (double) (arg0 * arg1);
-						}
-					});
-					break;
-				case "-":
-					functions.setPendingBinaryOperation(new DoubleBinaryOperator() {
-
-						@Override
-						public double applyAsDouble(double arg0, double arg1) {
-							return arg0 - arg1;
-						}
-					});
-					break;
-				case "+":
-					functions.setPendingBinaryOperation(new DoubleBinaryOperator() {
-
-						@Override
-						public double applyAsDouble(double arg0, double arg1) {
-							return arg0 + arg1;
-						}
-					});
-					break;
-				case "x^n":
-					functions.setPendingBinaryOperation(new DoubleBinaryOperator() {
-
-						@Override
-						public double applyAsDouble(double arg0, double arg1) {
-							return Math.pow(arg0, arg1);
-						}
-					});
-					break;
-				default:
-					throw new IllegalArgumentException("Operation \'" + operator + "\' is unsupported!");
-				}
+				functions.setPendingBinaryOperation((((BinaryOperatorButton) event.getSource()).getOperator()));
 
 				flag = true;
-				result.setText(String.valueOf(functions.getActiveOperand()));
+				// result.setText(String.valueOf(functions.getActiveOperand()));
 			} catch (Exception e) {
 				errorException(e.getMessage());
 			}
@@ -398,65 +350,19 @@ public class Calculator extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			try {
-				String operation = ((JButton) event.getSource()).getText();
+				UnaryOperatorButton button = (UnaryOperatorButton) (event.getSource());
 				double value = Double.parseDouble(result.getText());
+				String operation = button.getName();
 
 				switch (operation) {
 				case "1/x":
 					if (value == 0) {
 						throw new IllegalArgumentException("Number cannot be divided with zero!");
+					} else if (inv.isSelected()) {
+						throw new IllegalArgumentException("1/x doesn't have invers operation!");
 					}
 
 					result.setText(String.valueOf(1 / value));
-					break;
-				case "sin":
-					if (inv.isSelected()) {
-						result.setText(String.valueOf(Math.asin(value)));
-					} else {
-						result.setText(String.valueOf(Math.sin(value)));
-					}
-					break;
-				case "cos":
-					if (inv.isSelected()) {
-						result.setText(String.valueOf(Math.acos(value)));
-					} else {
-						result.setText(String.valueOf(Math.cos(value)));
-					}
-					break;
-				case "tan":
-					if (inv.isSelected()) {
-						result.setText(String.valueOf(Math.atan(value)));
-					} else {
-						result.setText(String.valueOf(Math.tan(value)));
-					}
-					break;
-				case "ctg":
-					if (inv.isSelected()) {
-						result.setText(String.valueOf(1.0 / (1.0 / Math.tan(value))));
-					} else {
-						result.setText(String.valueOf(1.0 / Math.tan(value)));
-					}
-					break;
-				case "log":
-					if (inv.isSelected()) {
-						result.setText(String.valueOf(Math.pow(10, value)));
-					} else {
-						result.setText(String.valueOf(Math.log10(value)));
-					}
-					break;
-				case "ln":
-					if (inv.isSelected()) {
-						result.setText(String.valueOf(Math.pow(Math.E, value)));
-					} else {
-						result.setText(String.valueOf(Math.log(value)));
-					}
-					break;
-				case "x^n":
-					if (inv.isSelected()) {
-						result.setText(String.valueOf(Math.pow(Math.E, value)));
-					} else {
-						result.setText(String.valueOf(Math.log(value)));
-					}
 					break;
 				case "=":
 					try {
@@ -470,10 +376,9 @@ public class Calculator extends JFrame {
 					result.setText(String.valueOf(functions.getValue()));
 					break;
 				default:
-					throw new IllegalArgumentException("Unsupported operation!");
+					functions.setValue(
+							inv.isSelected() ? button.getInverse().apply(value) : button.getOperator().apply(value));
 				}
-				functions.setValue(Double.parseDouble(result.getText()));
-
 				if (operation.equals("=")) {
 					result.setText(String.valueOf(functions.getActiveOperand()));
 				}
@@ -491,5 +396,13 @@ public class Calculator extends JFrame {
 	 */
 	private static void errorException(String message) {
 		JOptionPane.showMessageDialog(null, message, "Error!", JOptionPane.ERROR_MESSAGE);
+	}
+
+	/**
+	 * Method changes result display with new value
+	 */
+	@Override
+	public void valueChanged(CalcModel model) {
+		result.setText(String.valueOf(model.getValue()));
 	}
 }
