@@ -98,8 +98,8 @@ public class CalcLayout implements LayoutManager2 {
 					container.getInsets().left + (component.getKey().getColumn() - 1) * (size.width + bound),
 					container.getInsets().top + (component.getKey().getRow() - 1) * (bound + size.height));
 
-			// we set size depends on location,if component is on position (1,1) it would
-			// take 5 width cells
+			// we set size depending on location,if component is on position (1,1) it would
+			// take 5 width cells. Cell height is always same
 
 			component.getValue()
 					.setSize((component.getKey().getRow() == 1 && component.getKey().getColumn() == 1)
@@ -168,7 +168,8 @@ public class CalcLayout implements LayoutManager2 {
 			}
 		}
 
-		container.remove(forDelete);
+		if (forDelete != null)
+			container.remove(forDelete);
 	}
 
 	/**
@@ -194,7 +195,7 @@ public class CalcLayout implements LayoutManager2 {
 
 			if (array.length != 2) {
 				throw new CalcLayoutException(
-						"Wrong format of position. It has " + array.length + " elements but must have 2!");
+						"Wrong format of position. It has " + array.length + " elements but must have only 2!");
 			}
 
 			try {
@@ -328,7 +329,6 @@ public class CalcLayout implements LayoutManager2 {
 		height = insets.top + insets.bottom + row * height + (row - 1) * bound;
 		width = insets.left + insets.right + (maxFirst != 0 ? (maxFirst + 2 * width) : column * width)
 				+ (column - 1) * bound;
-		// width = insets.left + insets.right + column * width + (column - 1) * bound;
 
 		return new Dimension(width, height);
 	}
