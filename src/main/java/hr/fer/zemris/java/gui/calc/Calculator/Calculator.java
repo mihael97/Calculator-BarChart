@@ -107,14 +107,13 @@ public class Calculator extends JFrame implements CalcValueListener {
 			bt0.addActionListener(new NumberWork());
 			panel.add(bt0, new RCPosition(5, 3));
 
-			JButton plusMinus = new JButton("+/-");
+			UnaryOperatorButton plusMinus = new UnaryOperatorButton("+/-", null, null);
 			plusMinus.addActionListener(new UnaryOperationWork());
 			panel.add(plusMinus, new RCPosition(5, 4));
 
 			JButton dot = new JButton(".");
 			dot.addActionListener(e -> {
 				functions.insertDecimalPoint();
-				result.setText(result.getText() + ".");
 			});
 			panel.add(dot, new RCPosition(5, 5));
 
@@ -362,7 +361,7 @@ public class Calculator extends JFrame implements CalcValueListener {
 						throw new IllegalArgumentException("1/x doesn't have invers operation!");
 					}
 
-					result.setText(String.valueOf(1 / value));
+					functions.setValue(Double.parseDouble(String.valueOf(1 / value)));
 					break;
 				case "=":
 					try {
